@@ -16,40 +16,6 @@ export default function App() {
   const ref = useRef(null);
 
   useEffect(() => {
-
-    if (!('MutationObserver' in window)) return setLoaded(true);
-    const elem = ref.current;
-
-    const observer = new MutationObserver((mutationList) => {
-      // Get the iframe from the mutation that has added it
-      const iframeAdded = mutationList.reduce((acc, curr) => {
-        const iframe = Array.from(curr.addedNodes).find(
-          (node) => node.nodeName === 'IFRAME'
-        );
-        if (iframe) {
-          acc = iframe;
-        }
-        return acc;
-      }, undefined);
-
-      if (iframeAdded) {
-        iframeAdded.addEventListener('load', () => setLoaded(true));
-      }
-    });
-
-    if (elem) {
-      observer.observe(elem, {
-        childList: true,
-        attributes: true,
-        subtree: true
-      });
-    }
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  useEffect(() => {
     fetchRetry(`${TIKTOK_OEMBED_BASE_URL}?url=${url}`, {
       retries: 3,
       retryDelay: (attempt) => 2 ** attempt * 1000
@@ -83,7 +49,7 @@ export default function App() {
       </Helmet>
       <div
         ref={ref}
-        style={{ display: loaded && html ? 'flex' : 'none' }}
+        style={{ display: html ? 'flex' : 'none' }}
         dangerouslySetInnerHTML={{ __html: html || '' }}
       />
     </div>
