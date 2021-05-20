@@ -17,7 +17,7 @@ function createEmbedMarkup(data) {
 function App() {
   const [data, setData] = useState([])
   useEffect(() => {
-  fetch('https://www.tiktok.com/oembed?url=https://www.tiktok.com/@that_fooodie_girl/video/6963849640575880449?sender_device=pc&sender_web_id=6964309371824113154&is_from_webapp=v1&is_copy_url=0')
+    fetch('https://www.tiktok.com/oembed?url=https://www.tiktok.com/@muhammadzeeshan84/video/6964349075789532417?lang=en&is_copy_url=0&is_from_webapp=v1&sender_device=pc&sender_web_id=6964308303665595905')
   .then(response => response.json())
   .then(data =>
     setData(data)
