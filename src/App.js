@@ -1,57 +1,25 @@
-import React, { useState, useRef, useEffect, Fragment } from 'react';
-import { Helmet } from 'react-helmet';
-import withRetry from 'fetch-retry';
 
-const TIKTOK_OEMBED_BASE_URL = `https://www.tiktok.com/oembed`;
+import InnerHTML from "dangerously-set-html-content";
 
-const fetchRetry = withRetry(window.fetch);
+function createMarkup() {
+  return { __html: "First &middot; Second" };
+}
 
-const url ='https://www.tiktok.com/@scout2015/video/6718335390845095173'
-export default function App() {
-  const [loaded, setLoaded] = useState(false);
-  const [error, setError] = useState(undefined);
-  const [scriptSrc, setScriptSrc] = useState(undefined);
-  const [html, setHTML] = useState(undefined);
+function createEmbedMarkup() {
+  return {
+    __html:
+      '<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@scout2015/video/6718335390845095173" data-video-id="6718335390845095173" style="max-width: 605px;min-width: 325px;" > <section> <a target="_blank" title="@scout2015" href="https://www.tiktok.com/@scout2015">@scout2015</a> <p>Scramble up ur name & I’ll try to guess it😍❤️ <a title="foryoupage" target="_blank" href="https://www.tiktok.com/tag/foryoupage">#foryoupage</a> <a title="petsoftiktok" target="_blank" href="https://www.tiktok.com/tag/petsoftiktok">#petsoftiktok</a> <a title="aesthetic" target="_blank" href="https://www.tiktok.com/tag/aesthetic">#aesthetic</a></p> <a target="_blank" title="♬ original sound - tiff" href="https://www.tiktok.com/music/original-sound-6689804660171082501">♬ original sound - tiff</a> </section> </blockquote> <script async src="https://www.tiktok.com/embed.js"></script>'
+  };
+}
 
-  const ref = useRef(null);
-
-  useEffect(() => {
-    fetchRetry(`${TIKTOK_OEMBED_BASE_URL}?url=${url}`, {
-      retries: 3,
-      retryDelay: (attempt) => 2 ** attempt * 1000
-    })
-      .then((res) => res.json())
-      .then((res) => {
-		  console.log(res)
-        if (res && res.status_msg) throw new Error(res.status_msg);
-
-        if (!res || !res.html) throw new Error("API response doesn't look right");
-
-        const htmlString = res.html;
-
-        const tempElement = document.createElement('div');
-        tempElement.innerHTML = htmlString;
-
-        const scriptTag = tempElement.getElementsByTagName('script')[0];
-
-        setScriptSrc(scriptTag && scriptTag.src);
-        setHTML(htmlString.substr(0, htmlString.indexOf('<script')));
-      })
-      .catch((err) => setError(err));
-  }, [url]);
-
-  if (error) return <div>Error: {JSON.stringify(error)}</div>;
-
+function App() {
   return (
-    <div>
-      <Helmet>
-        <script id='ttEmbedder' async src={scriptSrc} />
-      </Helmet>
-      <div
-        ref={ref}
-        style={{ display: html ? 'flex' : 'none' }}
-        dangerouslySetInnerHTML={{ __html: html || '' }}
-      />
+    <div className="App">
+      <h1>Embedding HTML</h1>
+      <InnerHTML html={createEmbedMarkup().__html} />
     </div>
   );
 }
+
+
+export default App;
